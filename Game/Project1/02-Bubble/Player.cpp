@@ -13,32 +13,45 @@
 
 enum PlayerAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
+	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, JUMP_LEFT, JUMP_RIGHT, HIT_LEFT, HIT_RIGHT
 };
 
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
+	
 	bJumping = false;
-	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/PlayerAnimations.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
 	
 		sprite->setAnimationSpeed(STAND_LEFT, 8);
-		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
+		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.5f));
 		
 		sprite->setAnimationSpeed(STAND_RIGHT, 8);
-		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.25f, 0.f));
+		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.f, 0.25f));
 		
 		sprite->setAnimationSpeed(MOVE_LEFT, 8);
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.25f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.5f));
+		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.0f, 0.5f));
+		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.25f, 0.5f));
+		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.50f, 0.5f));
 		
 		sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.25f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.5f));
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0f, 0.25f));
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25f, 0.25f));
+		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.50f, 0.25f));
+
+		sprite->setAnimationSpeed(JUMP_LEFT, 8);
+		sprite->addKeyframe(JUMP_LEFT, glm::vec2(0.75f, 0.5f));
+
+		sprite->setAnimationSpeed(JUMP_RIGHT, 8);
+		sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.75f, 0.25f));
+
+		sprite->setAnimationSpeed(HIT_LEFT, 8);
+		sprite->addKeyframe(HIT_LEFT, glm::vec2(0.5f, 0.0f));
+
+		sprite->setAnimationSpeed(HIT_RIGHT, 8);
+		sprite->addKeyframe(HIT_RIGHT, glm::vec2(0.75f, 0.0f));
 		
 	sprite->changeAnimation(0);
 	tileMapDispl = tileMapPos;
@@ -58,6 +71,12 @@ void Player::update(int deltaTime)
 		{
 			posPlayer.x += 2;
 			sprite->changeAnimation(STAND_LEFT);
+			if (bJumping) {
+				sprite->changeAnimation(JUMP_LEFT);
+			}
+		}
+		if (bJumping) {
+			sprite->changeAnimation(JUMP_LEFT);
 		}
 	}
 	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
@@ -69,6 +88,12 @@ void Player::update(int deltaTime)
 		{
 			posPlayer.x -= 2;
 			sprite->changeAnimation(STAND_RIGHT);
+			if (bJumping) {
+				sprite->changeAnimation(JUMP_LEFT);
+			}
+		}
+		if (bJumping) {
+			sprite->changeAnimation(JUMP_RIGHT);
 		}
 	}
 	else
@@ -92,6 +117,8 @@ void Player::update(int deltaTime)
 			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
 			if(jumpAngle > 90)
 				bJumping = !map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
+
+			//cambiar animación aqui salto
 		}
 	}
 	else
@@ -99,6 +126,7 @@ void Player::update(int deltaTime)
 		posPlayer.y += FALL_STEP;
 		if(map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
 		{
+			//cambiar animación aqui salto
 			if(Game::instance().getSpecialKey(GLUT_KEY_UP))
 			{
 				bJumping = true;
