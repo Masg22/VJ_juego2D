@@ -7,13 +7,13 @@
 
 
 #define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 96
+#define JUMP_HEIGHT 90
 #define FALL_STEP 4
 
 
 enum PlayerAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, JUMP_LEFT, JUMP_RIGHT, HIT_LEFT, HIT_RIGHT
+	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, JUMP_LEFT, JUMP_RIGHT, HIT_LEFT, HIT_RIGHT, CLIMB_STATIC, CLIMB_ACTIVE
 };
 
 
@@ -23,7 +23,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	bJumping = false;
 	spritesheet.loadFromFile("images/PlayerAnimations.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(4);
+	sprite->setNumberAnimations(10);
 	
 		sprite->setAnimationSpeed(STAND_LEFT, 8);
 		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.5f));
@@ -52,6 +52,14 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 		sprite->setAnimationSpeed(HIT_RIGHT, 8);
 		sprite->addKeyframe(HIT_RIGHT, glm::vec2(0.75f, 0.0f));
+
+		sprite->setAnimationSpeed(CLIMB_STATIC, 8);
+		sprite->addKeyframe(CLIMB_STATIC, glm::vec2(0.0f, 0.0f));
+
+		sprite->setAnimationSpeed(CLIMB_ACTIVE, 8);
+		sprite->addKeyframe(CLIMB_ACTIVE, glm::vec2(0.0f, 0.0f));
+		sprite->addKeyframe(CLIMB_ACTIVE, glm::vec2(0.25f, 0.0f));
+
 		
 	sprite->changeAnimation(0);
 	tileMapDispl = tileMapPos;
@@ -115,6 +123,9 @@ void Player::update(int deltaTime)
 		else
 		{
 			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
+			if (jumpAngle < 90 && map->collisionMoveUp(posPlayer, glm::ivec2(32, 32), &posPlayer.y)) {
+				jumpAngle = 90;
+			}
 			if(jumpAngle > 90)
 				bJumping = !map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
 
