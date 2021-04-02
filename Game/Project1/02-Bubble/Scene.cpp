@@ -1,8 +1,12 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
+#include <GL/glut.h>
+#include <glm/glm.hpp>
 
 
 #define SCREEN_X 0
@@ -11,36 +15,47 @@
 #define INIT_PLAYER_X_TILES 11
 #define INIT_PLAYER_Y_TILES 12
 
+#define FALL_STEP 4
 
 Scene::Scene()
 {
 	map = NULL;
 	player = NULL;
+	colisions = NULL;
 }
 
 Scene::~Scene()
 {
-	if(map != NULL)
+	resetScene();
+}
+
+void Scene::resetScene() {
+	if (map != NULL)
 		delete map;
-	if(player != NULL)
+	if (player != NULL)
 		delete player;
+	if (colisions != NULL)
+		delete colisions;
+
+	enemies.clear();
 }
 
 
-void Scene::init()
-{
+void Scene::init(std::string levelPathFile, std::string backgroundPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile){
+	resetScene();
+	bToReset = false;
+
 	initShaders();
-	map = TileMap::createTileMap("levels/level00.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	colisions = new Colisions();
+
+	//map = TileMap::createTileMap("levels/level00.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap(levelPathFile + ".txt", glm::vec2(0, 0), texProgram);
 
 	player = new Player();
-	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	player->init(texProgram, this);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	player->setTileMap(map);
-
-	enemy = new Enemy();
-	enemy->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	enemy->setPosition(glm::vec2(10 * map->getTileSize(), 10 * map->getTileSize()));
-	enemy->setTileMap(map);
+	
+	initEnemies(enemiesLocationPathFile);
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -50,7 +65,17 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	player->update(deltaTime);
-	enemy->update(deltaTime);
+	for (BaseEnemy* enemy : enemies) {
+		enemy->update(deltaTime);
+	}
+
+	for (set<BaseEnemy*>::iterator it = enemies.begin(); it != enemies.end();) {
+		if ((*it)->isCharacterDead()) {
+			//Game::instance().addScore((*it)->getScore());
+			enemies.erase(it++);
+		}
+		else ++it;
+	}
 }
 
 void Scene::render()
@@ -65,7 +90,76 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	map->render();
 	player->render();
-	enemy->render();
+	for (BaseEnemy* enemy : enemies) {
+		enemy->render();
+	}
+}
+
+bool Scene::collisionMoveRight(Character* character) const {
+	bool mapCollision = colisions->mapRight(map, character);
+	bool enemyCollision = characterCollidesEnemies(character);
+	bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision || tilesCollision;
+}
+
+bool Scene::collisionMoveLeft(Character* character) const {
+	bool mapCollision = colisions->mapLeft(map, character);
+	bool enemyCollision = characterCollidesEnemies(character);
+	bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision || tilesCollision;
+}
+
+bool Scene::collisionMoveDown(Character* character) const {
+	bool mapCollision = colisions->mapDown(map, character);
+	bool enemyCollision = characterCollidesEnemies(character);
+	bool tilesCollision = characterCollidesTiles(character);
+	if (!mapCollision && tilesCollision) {
+		glm::ivec2 posChar = character->getPosition();
+		character->setPosition(glm::ivec2(posChar.x, posChar.y - FALL_STEP));
+	}
+	return mapCollision || enemyCollision || tilesCollision;
+}
+
+bool Scene::collisionMoveUp(Character* character) const {
+	bool mapCollision = colisions->mapUp(map, character);
+	bool enemyCollision = characterCollidesEnemies(character);
+	bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision || tilesCollision;
+}
+
+bool Scene::collisionCanFall(BaseEnemy* enemy) const {
+	return colisions->mapFalls(map, enemy);
+}
+
+bool Scene::characterCollidesEnemies(Character* character) const {
+	bool collision = false; //Can be improved checking if true after each enemy and returning(with few enemies doesn't matter)
+
+	int posEnemyX = character->getPosition().x;
+	bool collidedEnemy = false;
+	for (BaseEnemy* enemy : enemies) {
+		collidedEnemy = colisions->characters(character, enemy);
+		collision = collision || collidedEnemy;
+		if (collidedEnemy) {
+			posEnemyX = enemy->getPosition().x;
+			break;
+		}
+		if (AttackEnemy* aEnemy = dynamic_cast<AttackEnemy*>(enemy)) {
+			collidedEnemy = collision || colisions->object(character, aEnemy->getAttack());
+			collision = collision || collidedEnemy;
+			if (collidedEnemy) {
+				posEnemyX = (aEnemy->getAttack())->getPosition().x;
+				break;
+			}
+		}
+
+	}
+
+	Player* p = dynamic_cast<Player*>(character);
+	if (p && collision) {
+		//enemies can not get damaged between them!
+		p->damage();
+	}
+	return collision;
 }
 
 void Scene::initShaders()
@@ -98,5 +192,45 @@ void Scene::initShaders()
 	fShader.free();
 }
 
+
+void Scene::initEnemies(std::string enemiesLocationPathFile) {
+	ifstream fin;
+	string line;
+	stringstream sstream;
+
+	fin.open(enemiesLocationPathFile.c_str());
+	if (!fin.is_open()) {
+		cout << "file already open!" << endl;
+		return;
+	}
+
+	getline(fin, line);
+	sstream.str(line);
+	
+	int numEnemies;
+	sstream >> numEnemies;
+
+	int enemyType, posX, posY;
+
+	for (int i = 0; i < numEnemies; ++i) {
+		getline(fin, line);
+		stringstream(line) >> enemyType >> posX >> posY;
+		switch (enemyType) {
+		case 0: {
+			Skeleton* skeleton = new Skeleton;
+			skeleton->init(texProgram, this);
+			skeleton->setPosition(glm::vec2(posX * map->getTileSize(), posY * map->getTileSize()));
+			enemies.insert(skeleton);
+			break;
+		}
+		}
+	}
+
+	fin.close();
+}
+
+bool Scene::playerHits(BaseEnemy* enemy) const {
+	return false;
+}
 
 
