@@ -40,3 +40,7 @@ void BaseEnemy::update(int deltaTime)
 
 	Character::update(deltaTime);
 }
+
+BaseEnemy::~BaseEnemy()
+{
+}

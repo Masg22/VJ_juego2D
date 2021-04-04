@@ -11,12 +11,41 @@
 #define JUMP_HEIGHT 90
 #define FALL_STEP 4
 #define MOVEMENT_DEFAULT 2
+#define MOVEMENT_SPEED 3
+#define HEALTH 100
 
 
 enum PlayerAnims
 {
 	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, JUMP_LEFT, JUMP_RIGHT, ATTACK_LEFT, ATTACK_RIGHT, CLIMB_STATIC, CLIMB_ACTIVE
 };
+
+enum PowerUps {
+	BOOTS, BOOK, HELMET, RAINCOAT
+};
+
+Player::Player() {
+
+	setPathToSpriteSheet("images/PlayerAnimations.png");
+
+	mNumberAnimations = 10;
+
+	bAnimating = false;
+	mSpriteRows = 4;
+	mSpriteColumns = 4;
+
+	maxHealth = HEALTH;
+	actHealth = HEALTH;
+
+	attackTime = 0;
+
+	godMode = false;
+	powerUps[BOOTS] = false;
+	powerUps[BOOK] = false;
+	powerUps[HELMET] = false;
+	powerUps[RAINCOAT] = false;
+
+}
 
 void Player::init(ShaderProgram& shaderProgram, Scene* scene)
 {
@@ -65,9 +94,6 @@ void Player::init(ShaderProgram& shaderProgram, Scene* scene)
 void Player::update(int deltaTime) {
 	if (!bAnimating) {
 		computeNextMove(deltaTime);
-	}
-	else {
-		computeAnimation(deltaTime);
 	}
 	Character::update(deltaTime);
 }
@@ -156,7 +182,7 @@ void Player::update(int deltaTime) {
 
 void Player::computeNextMove(int deltaTime) {
 	computeAttack(deltaTime);
-	computeMovement();
+	computeMovement(deltaTime);
 	computeJump();
 }
 
@@ -200,8 +226,11 @@ void Player::computeAttack(int deltaTime) {
 	}
 }
 
-void Player::computeMovement() {
+void Player::computeMovement(int deltaTime) {
 	if (bAttacking) return;
+
+	sprite->update(deltaTime);
+
 	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 		if (bJumping && sprite->animation() != JUMP_LEFT) {
 			sprite->changeAnimation(JUMP_LEFT);
@@ -209,9 +238,9 @@ void Player::computeMovement() {
 		else if (!bJumping && sprite->animation() != MOVE_LEFT) {
 			sprite->changeAnimation(MOVE_LEFT);
 		}
-		posCharacter.x -= MOVEMENT_DEFAULT;
+		powerUps[BOOTS] ? posCharacter.x -= MOVEMENT_SPEED : posCharacter.x -= MOVEMENT_DEFAULT;
 		if (scene->collisionMoveLeft(this)) {
-			posCharacter.x += MOVEMENT_DEFAULT;
+			powerUps[BOOTS] ? posCharacter.x += MOVEMENT_SPEED : posCharacter.x += MOVEMENT_DEFAULT;
 			if (!bJumping) {
 				sprite->changeAnimation(STAND_LEFT);
 			}
@@ -224,9 +253,9 @@ void Player::computeMovement() {
 		else if (!bJumping && sprite->animation() != MOVE_RIGHT) {
 			sprite->changeAnimation(MOVE_RIGHT);
 		}
-		posCharacter.x += MOVEMENT_DEFAULT;
+		powerUps[BOOTS] ? posCharacter.x += MOVEMENT_SPEED : posCharacter.x += MOVEMENT_DEFAULT;
 		if (scene->collisionMoveRight(this)) {
-			posCharacter.x -= MOVEMENT_DEFAULT;
+			powerUps[BOOTS] ? posCharacter.x -= MOVEMENT_SPEED : posCharacter.x -= MOVEMENT_DEFAULT;
 			if (!bJumping) {
 				sprite->changeAnimation(STAND_RIGHT);
 			}
@@ -239,6 +268,8 @@ void Player::computeMovement() {
 		else if (sprite->animation() == MOVE_RIGHT)
 			sprite->changeAnimation(STAND_RIGHT);
 	}
+
+	sprite->setPosition(glm::vec2(float(posCharacter.x), float(posCharacter.y)));
 }
 
 void Player::computeJump() {
@@ -278,12 +309,29 @@ void Player::computeJump() {
 			}
 		}
 	}
+
+	sprite->setPosition(glm::vec2(float(posCharacter.x), float(posCharacter.y)));
+}
+
+void Player::damage(int attackPower) {
+	if (inmunytyFrames == 0 && !godMode) {
+		inmunytyFrames = 10;
+		//sonido de daño
+		actHealth -= attackPower;
+	}
 }
 
 Player::~Player()
 {
 }
 
+void Player::changeGameMode() {
+	godMode = !godMode;
+}
+
+void Player::givePowerUp(int i) {
+	powerUps[i] = !powerUps[i];
+}
 
 
 

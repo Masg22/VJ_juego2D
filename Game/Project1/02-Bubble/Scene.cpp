@@ -13,8 +13,8 @@
 #define SCREEN_X 0
 #define SCREEN_Y 0
 
-#define INIT_PLAYER_X_TILES 11
-#define INIT_PLAYER_Y_TILES 12
+#define INIT_PLAYER_X_TILES 17
+#define INIT_PLAYER_Y_TILES 18
 
 #define FALL_STEP 4
 
@@ -41,7 +41,6 @@ void Scene::resetScene() {
 	enemies.clear();
 }
 
-
 void Scene::init(std::string levelPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile){
 	resetScene();
 	bToReset = false;
@@ -50,7 +49,7 @@ void Scene::init(std::string levelPathFile, std::string enemiesLocationPathFile,
 	colisions = new Colisions();
 
 	//map = TileMap::createTileMap("levels/level00.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	map = TileMap::createTileMap(levelPathFile + ".txt", glm::vec2(0, 0), texProgram);
+	map = TileMap::createTileMap(levelPathFile, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 	player = new Player();
 	player->init(texProgram, this);
@@ -152,7 +151,7 @@ bool Scene::characterCollidesEnemies(Character* character) const {
 	Player* p = dynamic_cast<Player*>(character);
 	if (p && collision) {
 		//enemies can not get damaged between them!
-		p->damage();
+		p->damage(10);
 	}
 	return collision;
 }
@@ -187,13 +186,12 @@ void Scene::initShaders()
 	fShader.free();
 }
 
-
 void Scene::initEnemies(std::string enemiesLocationPathFile) {
 	ifstream fin;
 	string line;
 	stringstream sstream;
 
-	fin.open(enemiesLocationPathFile.c_str());
+	fin.open(enemiesLocationPathFile);
 	if (!fin.is_open()) {
 		cout << "file already open!" << endl;
 		return;
@@ -204,7 +202,6 @@ void Scene::initEnemies(std::string enemiesLocationPathFile) {
 	
 	int numEnemies;
 	sstream >> numEnemies;
-
 	int enemyType, posX, posY;
 
 	for (int i = 0; i < numEnemies; ++i) {
@@ -222,10 +219,17 @@ void Scene::initEnemies(std::string enemiesLocationPathFile) {
 	}
 
 	fin.close();
+
 }
 
 bool Scene::playerHits(BaseEnemy* enemy) const {
 	return false;
 }
 
+void Scene::changePlayerGameMode() {
+	player->changeGameMode();
+}
 
+void Scene::givePlayerPowerUp(int i) {
+	player->givePowerUp(i);
+}

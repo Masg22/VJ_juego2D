@@ -38,6 +38,10 @@ public:
 	bool playerHits(BaseEnemy* enemy) const;
 
 	Player* getPlayer() { return  player; }
+	TileMap* getMap() { return map; }
+
+	void changePlayerGameMode();
+	void givePlayerPowerUp(int i);
 
 private:
 	void initShaders();

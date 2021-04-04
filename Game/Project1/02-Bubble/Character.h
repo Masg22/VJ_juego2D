@@ -11,7 +11,7 @@ class Scene;
 class Character {
 public:
 	Character();
-	~Character() {}
+	~Character() {};
 
 	void init(ShaderProgram& shaderProgram, Scene* scene);
 	void update(int deltaTime);

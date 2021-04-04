@@ -19,23 +19,26 @@ public:
 	virtual void update(int deltaTime);
 
 	void computeNextMove(int deltaTime);
-	void computeJumping();
-	void computeAnimation(int deltaTime);
 
-	void damage();
-	
-	void setTileMap(TileMap *tileMap);
-	void setPosition(const glm::vec2 &pos);
+	void damage(int power);
 
 	void computeAttack(int deltaTime);
-	void computeMovement();
+	void computeMovement(int deltaTime);
 	void computeJump();
+
+	void changeGameMode();
+	void givePowerUp(int i);
 
 	
 private:
-	int attackSoundTime, attackTime;
+	int actHealth, maxHealth;
+	int attackSoundTime;
+	int attackTime;
 	bool bAnimating;
-	int animationTime;
+	//int animationTime;
+
+	bool godMode;
+	bool powerUps[4];
 };
 
 

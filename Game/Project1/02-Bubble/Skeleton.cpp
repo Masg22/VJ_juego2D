@@ -11,12 +11,16 @@ enum SkeletonAnims
 Skeleton::Skeleton()
 {
 	dir = glm::ivec2(-1, 0);
+	setPathToSpriteSheet("images/SkeletonAnimations.png");
+	mNumberAnimations = 2;
+	mSpriteRows = 2;
+	mSpriteColumns = 2;
 }
 
 void Skeleton::init(ShaderProgram& shaderProgram, Scene* scene) {
 
 	BaseEnemy::init(shaderProgram, scene);
-	sprite->setNumberAnimations(2);
+	sprite->setNumberAnimations(mNumberAnimations);
 	sprite->setAnimationSpeed(MOVE_LEFT, 8);
 	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.5f, 0.5f));
 	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.0f, 0.5f));

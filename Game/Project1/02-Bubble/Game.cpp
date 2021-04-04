@@ -7,9 +7,9 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	string levelPathFile = "./levels/level1.txt";
-	string enemiesLocationPathFile = "./levels/level1_enemies.txt";
-	string itemsLocationPathFile = "./levels/level1_items.txt";
+	string levelPathFile = "levels/level00.txt";
+	string enemiesLocationPathFile = "levels/level1_enemies.txt";
+	string itemsLocationPathFile = "levels/level1_items.txt";
 	scene.init(levelPathFile, enemiesLocationPathFile, itemsLocationPathFile);
 }
 
@@ -28,8 +28,18 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
+	if (key == 27) // Escape code
 		bPlay = false;
+	else if (key == 'g' || key == 'G')
+		scene.changePlayerGameMode();
+	else if (key == '0') //BOOTS
+		scene.givePlayerPowerUp(0);
+	else if (key == '1') //BOOK
+		scene.givePlayerPowerUp(0);
+	else if (key == '2') //HELMET
+		scene.givePlayerPowerUp(0);
+	else if (key == '3') //RAINCOAT
+		scene.givePlayerPowerUp(0);
 	keys[key] = true;
 }
 
