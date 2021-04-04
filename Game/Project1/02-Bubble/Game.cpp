@@ -7,7 +7,10 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	scene.init();
+	string levelPathFile = "./levels/level1.txt";
+	string enemiesLocationPathFile = "./levels/level1_enemies.txt";
+	string itemsLocationPathFile = "./levels/level1_items.txt";
+	scene.init(levelPathFile, enemiesLocationPathFile, itemsLocationPathFile);
 }
 
 bool Game::update(int deltaTime)

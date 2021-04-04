@@ -19,7 +19,7 @@ Character::Character() {
 }
 
 void Character::init(ShaderProgram& shaderProgram, Scene* scene) {
-	mScene = scene;
+	this->scene = scene;
 
 	bJumping = false;
 	bAttacking = false;

@@ -7,6 +7,7 @@
 #include "Game.h"
 #include <GL/glut.h>
 #include <glm/glm.hpp>
+#include "Skeleton.h"
 
 
 #define SCREEN_X 0
@@ -41,7 +42,7 @@ void Scene::resetScene() {
 }
 
 
-void Scene::init(std::string levelPathFile, std::string backgroundPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile){
+void Scene::init(std::string levelPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile){
 	resetScene();
 	bToReset = false;
 
@@ -98,33 +99,33 @@ void Scene::render()
 bool Scene::collisionMoveRight(Character* character) const {
 	bool mapCollision = colisions->mapRight(map, character);
 	bool enemyCollision = characterCollidesEnemies(character);
-	bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision || tilesCollision;
+	//bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision;// || tilesCollision;
 }
 
 bool Scene::collisionMoveLeft(Character* character) const {
 	bool mapCollision = colisions->mapLeft(map, character);
 	bool enemyCollision = characterCollidesEnemies(character);
-	bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision || tilesCollision;
+	//bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision;// || tilesCollision;
 }
 
 bool Scene::collisionMoveDown(Character* character) const {
 	bool mapCollision = colisions->mapDown(map, character);
 	bool enemyCollision = characterCollidesEnemies(character);
-	bool tilesCollision = characterCollidesTiles(character);
-	if (!mapCollision && tilesCollision) {
+	//bool tilesCollision = characterCollidesTiles(character);
+	if (!mapCollision /*&& tilesCollision*/) {
 		glm::ivec2 posChar = character->getPosition();
 		character->setPosition(glm::ivec2(posChar.x, posChar.y - FALL_STEP));
 	}
-	return mapCollision || enemyCollision || tilesCollision;
+	return mapCollision || enemyCollision;// || tilesCollision;
 }
 
 bool Scene::collisionMoveUp(Character* character) const {
 	bool mapCollision = colisions->mapUp(map, character);
 	bool enemyCollision = characterCollidesEnemies(character);
-	bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision || tilesCollision;
+	//bool tilesCollision = characterCollidesTiles(character);
+	return mapCollision || enemyCollision;// || tilesCollision;
 }
 
 bool Scene::collisionCanFall(BaseEnemy* enemy) const {
@@ -133,25 +134,19 @@ bool Scene::collisionCanFall(BaseEnemy* enemy) const {
 
 bool Scene::characterCollidesEnemies(Character* character) const {
 	bool collision = false; //Can be improved checking if true after each enemy and returning(with few enemies doesn't matter)
+	bool collidedEnemy = false;
 
 	int posEnemyX = character->getPosition().x;
-	bool collidedEnemy = false;
+
+	
 	for (BaseEnemy* enemy : enemies) {
+
 		collidedEnemy = colisions->characters(character, enemy);
 		collision = collision || collidedEnemy;
 		if (collidedEnemy) {
 			posEnemyX = enemy->getPosition().x;
 			break;
 		}
-		if (AttackEnemy* aEnemy = dynamic_cast<AttackEnemy*>(enemy)) {
-			collidedEnemy = collision || colisions->object(character, aEnemy->getAttack());
-			collision = collision || collidedEnemy;
-			if (collidedEnemy) {
-				posEnemyX = (aEnemy->getAttack())->getPosition().x;
-				break;
-			}
-		}
-
 	}
 
 	Player* p = dynamic_cast<Player*>(character);

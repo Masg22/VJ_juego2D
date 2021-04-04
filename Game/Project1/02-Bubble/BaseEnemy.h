@@ -6,8 +6,7 @@
 // all properties it needs to track its movement, jumping, and collisions.
 
 
-class BaseEnemy : public Character
-{
+class BaseEnemy : public Character {
 
 public:
 	BaseEnemy();

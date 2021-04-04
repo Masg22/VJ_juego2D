@@ -5,17 +5,18 @@
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "TileMap.h"
+
 #include "Player.h"
-#include "BaseEnemy.h"
 #include "Colisions.h"
+
 #include <set>
 
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
-
 class Scene {
+
 public:
 	Scene();
 	~Scene();
@@ -23,7 +24,7 @@ public:
 	void resetScene();
 	void setSceneToReset() { bToReset = true; };
 
-	void init(std::string levelPathFile, std::string backgroundPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile);
+	void init(std::string levelPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile);
 	void update(int deltaTime);
 	void render();
 
@@ -32,7 +33,7 @@ public:
 	bool collisionMoveDown(Character* character) const;
 	bool collisionMoveUp(Character* character) const;
 
-	bool characterCollidesTiles(Character* character) const;
+	//bool characterCollidesTiles(Character* character) const;
 	bool collisionCanFall(BaseEnemy* enemy) const;
 	bool playerHits(BaseEnemy* enemy) const;
 
@@ -43,6 +44,7 @@ private:
 	void initEnemies(std::string enemiesLocationPathFile);
 	bool characterCollidesEnemies(Character* character) const;
 
+private:
 	bool bToReset;
 	TileMap *map;
 
@@ -57,7 +59,6 @@ private:
 
 	Colisions* colisions;
 };
-
 
 #endif // _SCENE_INCLUDE
 

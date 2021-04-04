@@ -15,29 +15,90 @@ bool Colisions::mapRight(const TileMap* map, Character* character) const {
 	glm::ivec2 pos = character->getPosition();
 	glm::ivec2 size = character->getSize();
 
-	return map->collisionMoveRight(pos, size);
+	//RIGHT LIMITS, depends on level size
+	if ((pos.x + size.x) > (map->getMapWidth())) return true;
+	int tileSize = map->getTileSize();
+	int x, y0, y1;
+	x = (pos.x + size.x - 1) / tileSize;
+	y0 = pos.y / tileSize;
+	y1 = (pos.y + size.y - 1) / tileSize;
+	int mapTilesWidth = map->getMapTilesWidth();
+	int* m = map->getMap();
+	for (int y = y0; y <= y1; y++)
+	{
+		if (m[y * mapTilesWidth + x] != 0)
+			return true;
+	}
+
+	return false;
 }
 
 bool Colisions::mapLeft(const TileMap* map, Character* character) const {
 	glm::ivec2 pos = character->getPosition();
 	glm::ivec2 size = character->getSize();
+	if (pos.x < 0) return true; //Screen limit
+	int x, y0, y1;
+	int tileSize = map->getTileSize();
+	x = pos.x / tileSize;
+	y0 = pos.y / tileSize;
+	y1 = (pos.y + size.y - 1) / tileSize;
+	int mapTilesWidth = map->getMapTilesWidth();
+	int* m = map->getMap();
+	for (int y = y0; y <= y1; y++)
+	{
+		if (m[y * mapTilesWidth + x] != 0)
+			return true;
+	}
 
-	return map->collisionMoveLeft(pos, size);
+	return false;
 }
 
 bool Colisions::mapDown(const TileMap* map, Character* character) const {
 	glm::ivec2 pos = character->getPosition();
 	glm::ivec2 size = character->getSize();
-	int* y = character -> getY(); 
 
-	return map->collisionMoveDown(pos, size, y);
+	int x0, x1, y;
+	int tileSize = map->getTileSize();
+
+	x0 = pos.x / tileSize;
+	x1 = (pos.x + size.x - 1) / tileSize;
+	y = (pos.y + size.y - 1) / tileSize;
+	int mapTilesWidth = map->getMapTilesWidth();
+	int* m = map->getMap();
+	for (int x = x0; x <= x1; x++)
+	{
+		if (m[y * mapTilesWidth + x] != 0)
+		{
+			if (pos.y - tileSize * y + size.y <= 4) {
+				character->setPosition(glm::ivec2(pos.x, tileSize * y - size.y));
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool Colisions::mapUp(const TileMap* map, Character* character) const {
 	glm::ivec2 pos = character->getPosition();
 	glm::ivec2 size = character->getSize();
 
-	return map->collisionMoveRight(pos, size);
+	if (pos.y < 0) return true; //Screen limit
+	int x0, x1, y;
+	int tileSize = map->getTileSize();
+
+	x0 = pos.x / tileSize;
+	x1 = (pos.x + size.x - 1) / tileSize;
+	y = pos.y / tileSize;
+	int mapTilesWidth = map->getMapTilesWidth();
+	int* m = map->getMap();
+	for (int x = x0; x <= x1; x++)
+	{
+		if (m[y * mapTilesWidth + x] != 0) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Colisions::mapFalls(const TileMap* map, BaseEnemy* enemy) const {
@@ -53,7 +114,7 @@ bool Colisions::mapFalls(const TileMap* map, BaseEnemy* enemy) const {
 	int mapTilesWidth = map->getMapTilesWidth();
 	int* m = map->getMap();
 	for (int x = x0; x <= x1; x++) {
-		if (map[y * mapTilesWidth + x] == 0) {
+		if (m[y * mapTilesWidth + x] == 0) {
 			return true;
 		}
 	}
@@ -65,9 +126,9 @@ bool Colisions::characters(Character* myself, const Character* other) const {
 		other->getCollisionPosition(), other->getCollisionSize());
 }
 
-bool Colisions::object(Character* myself, const Object* obj) const {
+/*bool Colisions::object(Character* myself, const Object* obj) const {
 	return quadsCollision(myself->getCollisionPosition(), myself->getCollisionSize(), obj->getPosition(), obj->getSize());
-}
+}*/
 
 
 bool Colisions::quadsCollision(glm::vec2 q1Pos, glm::vec2 q1Size, glm::vec2 q2Pos, glm::vec2 q2Size) const {

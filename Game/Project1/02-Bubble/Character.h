@@ -1,13 +1,17 @@
-#ifndef _PLAYER_INCLUDE
-#define _PLAYER_INCLUDE
+#ifndef _CHARACTER_INCLUDE
+#define _CHARACTER_INCLUDE
 
 #include "Sprite.h"
-#include "Scene.h"
+
+#define CHARACTER_SIZE_X 32
+#define CHARACTER_SIZE_Y 32
+
+class Scene;
 
 class Character {
 public:
 	Character();
-	~Character(){}
+	~Character() {}
 
 	void init(ShaderProgram& shaderProgram, Scene* scene);
 	void update(int deltaTime);
@@ -16,7 +20,10 @@ public:
 	void setPathToSpriteSheet(string path);
 	void setPosition(const glm::vec2& pos);
 	glm::ivec2 getPosition() const { return posCharacter; }
+	glm::ivec2 getSize() const { return glm::ivec2(CHARACTER_SIZE_X, CHARACTER_SIZE_Y); }
+	void setPosition(glm::ivec2 pos) { posCharacter = pos; }
 	glm::ivec2 getCollisionSize() const { return getSize(); }
+	virtual glm::ivec2 getCollisionPosition() const { return getPosition() + glm::ivec2(6, 10); }
 
 	virtual void damage();
 	virtual void getType() {}
@@ -25,6 +32,7 @@ public:
 
 	void setStartY(int newstartY) { startY = newstartY; }
 	int getStartY() { return startY; }
+	bool isCharacterDead() { return isDead; }
 
 protected:
 	int mStartAnimation;
@@ -39,11 +47,6 @@ protected:
 	bool isDead;
 	int inmunytyFrames; //despues de ser dañado no te pueden volver a golpear
 	//glm::ivec2 directionDamaged; //Direction to send character when being damaged
-
-
-
-
-
-}
+};
 
 #endif // _PLAYER_INCLUDE
