@@ -15,7 +15,7 @@ public:
 	Player();
 	~Player();
 
-	virtual void init(ShaderProgram& shaderProgram, Scene* scene);
+	virtual void init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene);
 	virtual void update(int deltaTime);
 
 	void computeNextMove(int deltaTime);
@@ -29,13 +29,22 @@ public:
 	void changeGameMode();
 	void givePowerUp(int i);
 
+	int isOut();
+	void initTeleports();
+	int getTeleportNum(int scene);
+	int teleport(int& scene);
 	
 private:
 	int actHealth, maxHealth;
+	bool lianaClimb, teleporting;
+
 	int attackSoundTime;
 	int attackTime;
 	bool bAnimating;
 	//int animationTime;
+
+	int count;
+	vector <pair <int, glm::ivec2> > teleports;
 
 	bool godMode;
 	bool powerUps[4];

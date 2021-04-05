@@ -11,7 +11,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y 0
+#define SCREEN_Y 32
 
 #define INIT_PLAYER_X_TILES 17
 #define INIT_PLAYER_Y_TILES 18
@@ -41,21 +41,21 @@ void Scene::resetScene() {
 	enemies.clear();
 }
 
-void Scene::init(std::string levelPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile){
-	resetScene();
-	bToReset = false;
+void Scene::init(Player* playerGen, int lvl){
 
 	initShaders();
+
+
+	map = TileMap::createTileMap("levels/level" + to_string(lvl) + ".txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+
 	colisions = new Colisions();
 
-	//map = TileMap::createTileMap("levels/level00.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	map = TileMap::createTileMap(levelPathFile, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-
-	player = new Player();
-	player->init(texProgram, this);
+	player = playerGen;
+	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, this);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	
-	initEnemies(enemiesLocationPathFile);
+	initEnemies("levels/level" + to_string(lvl) + "_enemies.txt");
+
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -68,7 +68,7 @@ void Scene::update(int deltaTime)
 	for (BaseEnemy* enemy : enemies) {
 		enemy->update(deltaTime);
 	}
-
+	//limpiar enemigos muertos
 	for (set<BaseEnemy*>::iterator it = enemies.begin(); it != enemies.end();) {
 		if ((*it)->isCharacterDead()) {
 			//Game::instance().addScore((*it)->getScore());
@@ -95,43 +95,53 @@ void Scene::render()
 	}
 }
 
-bool Scene::collisionMoveRight(Character* character) const {
-	bool mapCollision = colisions->mapRight(map, character);
-	bool enemyCollision = characterCollidesEnemies(character);
-	//bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision;// || tilesCollision;
+bool Scene::collisionMoveRight(const glm::ivec2& pos, const glm::ivec2& size) const {
+	return map->collisionMoveRight(pos, size);
 }
 
-bool Scene::collisionMoveLeft(Character* character) const {
-	bool mapCollision = colisions->mapLeft(map, character);
-	bool enemyCollision = characterCollidesEnemies(character);
-	//bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision;// || tilesCollision;
+bool Scene::collisionMoveLeft(const glm::ivec2& pos, const glm::ivec2& size) const {
+	return map->collisionMoveLeft(pos, size);
 }
 
-bool Scene::collisionMoveDown(Character* character) const {
-	bool mapCollision = colisions->mapDown(map, character);
-	bool enemyCollision = characterCollidesEnemies(character);
-	//bool tilesCollision = characterCollidesTiles(character);
-	if (!mapCollision /*&& tilesCollision*/) {
-		glm::ivec2 posChar = character->getPosition();
-		character->setPosition(glm::ivec2(posChar.x, posChar.y - FALL_STEP));
-	}
-	return mapCollision || enemyCollision;// || tilesCollision;
+bool Scene::collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const {
+	return map->collisionMoveDown(pos, size, posY);
 }
 
-bool Scene::collisionMoveUp(Character* character) const {
-	bool mapCollision = colisions->mapUp(map, character);
-	bool enemyCollision = characterCollidesEnemies(character);
-	//bool tilesCollision = characterCollidesTiles(character);
-	return mapCollision || enemyCollision;// || tilesCollision;
+bool Scene::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const {
+	return map->collisionMoveUp(pos, size, posY);
 }
 
 bool Scene::collisionCanFall(BaseEnemy* enemy) const {
 	return colisions->mapFalls(map, enemy);
 }
 
+int Scene::getMapSizeX() const {
+	return map->getMapWidth();
+}
+
+int Scene::getMapSizeY() const {
+	return map->getMapHeight();
+}
+
+bool Scene::collisionLiana(const glm::ivec2& pos, const glm::ivec2& size) const{
+	return map->collisionLiana(pos, size);
+}
+
+bool Scene::collisionLianaUp(const glm::ivec2& pos, const glm::ivec2& size) const {
+	return map->collisionLianaUp(pos, size);
+}
+
+bool Scene::collisionLianaDown(const glm::ivec2& pos, const glm::ivec2& size) const {
+	return map->collisionLianaDown(pos, size);
+}
+
+bool Scene::collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec2* posPlayer) const {
+	return map->collisionTP(pos, size, posPlayer);
+}
+
 bool Scene::characterCollidesEnemies(Character* character) const {
+	//REHACER
+
 	bool collision = false; //Can be improved checking if true after each enemy and returning(with few enemies doesn't matter)
 	bool collidedEnemy = false;
 
@@ -210,7 +220,7 @@ void Scene::initEnemies(std::string enemiesLocationPathFile) {
 		switch (enemyType) {
 		case 0: {
 			Skeleton* skeleton = new Skeleton;
-			skeleton->init(texProgram, this);
+			skeleton->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, this);
 			skeleton->setPosition(glm::vec2(posX * map->getTileSize(), posY * map->getTileSize()));
 			enemies.insert(skeleton);
 			break;

@@ -24,14 +24,24 @@ public:
 	void resetScene();
 	void setSceneToReset() { bToReset = true; };
 
-	void init(std::string levelPathFile, std::string enemiesLocationPathFile, std::string itemsLocationPathFile);
+	void init(Player* playerGen, int lvl);
 	void update(int deltaTime);
 	void render();
 
-	bool collisionMoveRight(Character* character) const;
-	bool collisionMoveLeft(Character* character) const;
-	bool collisionMoveDown(Character* character) const;
-	bool collisionMoveUp(Character* character) const;
+
+	//TO MAP
+	bool collisionMoveRight(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionMoveLeft(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
+	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
+	
+	int getMapSizeX() const;
+	int getMapSizeY() const;
+
+	bool collisionLiana(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionLianaUp(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionLianaDown(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec2* posPlayer) const;
 
 	//bool characterCollidesTiles(Character* character) const;
 	bool collisionCanFall(BaseEnemy* enemy) const;
@@ -49,19 +59,22 @@ private:
 	bool characterCollidesEnemies(Character* character) const;
 
 private:
-	bool bToReset;
-	TileMap *map;
 
+	int level;
+	vector<int> mapLevels;
+
+	bool bToReset;
+
+	TileMap *map;
 	Player *player;
+	set<BaseEnemy*> enemies;
+	Colisions* colisions;
 	
 	ShaderProgram texProgram;
+
 	float currentTime;
 
-	glm::mat4 projection;
-
-	set<BaseEnemy*> enemies;
-
-	Colisions* colisions;
+	glm::mat4 projection;	
 };
 
 #endif // _SCENE_INCLUDE

@@ -16,12 +16,14 @@
     <ClInclude Include="Colisions.h" />
     <ClInclude Include="BaseEnemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Status.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TileMap.h" />
   </ItemGroup>
@@ -36,7 +38,9 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Colisions.cpp" />
     <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Status.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TileMap.cpp" />
   </ItemGroup>

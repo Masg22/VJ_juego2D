@@ -12,7 +12,7 @@ public:
 	BaseEnemy();
 	~BaseEnemy();
 
-	virtual void init(ShaderProgram& shaderProgram, Scene* scene);
+	virtual void init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene);
 	virtual void update(int deltaTime);
 
 	virtual int getScore() { return 200; }

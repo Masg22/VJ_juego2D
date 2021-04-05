@@ -11,9 +11,9 @@ BaseEnemy::BaseEnemy() {
 	isAttacking = false;
 }
 
-void BaseEnemy::init(ShaderProgram& shaderProgram, Scene* scene)
+void BaseEnemy::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene)
 {
-	Character::init(shaderProgram, scene);
+	Character::init(tileMapPos, shaderProgram, scene);
 	/*
 	spritesheet.loadFromFile("images/SkeletonAnimations.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.5f, 0.5f), &spritesheet, &shaderProgram);

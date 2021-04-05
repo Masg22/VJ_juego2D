@@ -13,7 +13,7 @@ public:
 	Character();
 	~Character() {};
 
-	void init(ShaderProgram& shaderProgram, Scene* scene);
+	void init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene);
 	void update(int deltaTime);
 	virtual void render();
 
@@ -37,15 +37,21 @@ public:
 protected:
 	int mStartAnimation;
 	bool bJumping, bAttacking;
-	glm::ivec2 posCharacter;
+
+	glm::ivec2 tileMapDispl, posCharacter;
+
 	int jumpAngle, startY;
+
+	bool isDead;
+	int inmunytyFrames; //despues de ser dañado no te pueden volver a golpear
+
 	string pathToSpritesheet;
 	Texture spritesheet;
 	Sprite* sprite;
 	Scene* scene;
+
 	int mNumberAnimations, mSpriteColumns, mSpriteRows;
-	bool isDead;
-	int inmunytyFrames; //despues de ser dañado no te pueden volver a golpear
+	
 	//glm::ivec2 directionDamaged; //Direction to send character when being damaged
 };
 

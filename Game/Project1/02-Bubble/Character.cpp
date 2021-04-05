@@ -18,8 +18,10 @@ Character::Character() {
 	inmunytyFrames = 0;
 }
 
-void Character::init(ShaderProgram& shaderProgram, Scene* scene) {
+void Character::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene) {
 	this->scene = scene;
+
+	tileMapDispl = tileMapPos;
 
 	bJumping = false;
 	bAttacking = false;
@@ -54,7 +56,7 @@ void Character::render() {
 
 void Character::setPosition(const glm::vec2& pos) {
 	posCharacter = pos;
-	sprite->setPosition(glm::vec2(float(posCharacter.x), float(posCharacter.y)));
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posCharacter.x), float(tileMapDispl.y + posCharacter.y)));
 }
 
 void Character::damage() {

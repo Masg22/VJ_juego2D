@@ -17,9 +17,9 @@ Skeleton::Skeleton()
 	mSpriteColumns = 2;
 }
 
-void Skeleton::init(ShaderProgram& shaderProgram, Scene* scene) {
+void Skeleton::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene) {
 
-	BaseEnemy::init(shaderProgram, scene);
+	BaseEnemy::init(tileMapPos, shaderProgram, scene);
 	sprite->setNumberAnimations(mNumberAnimations);
 	sprite->setAnimationSpeed(MOVE_LEFT, 8);
 	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.5f, 0.5f));
@@ -46,13 +46,13 @@ void Skeleton::update(int deltaTime) {
 	}
 	else {
 		if (dir.x < 0) {
-			if (scene->collisionMoveLeft(this)) {
+			if (scene->collisionMoveLeft(posCharacter, glm::ivec2(32, 32))) {
 				sprite->changeAnimation(MOVE_RIGHT);
 				posCharacter -= dir;
 				dir = -dir;
 			}
 			else {
-				if (scene->collisionMoveRight(this)) {
+				if (scene->collisionMoveRight(posCharacter, glm::ivec2(32, 32))) {
 					sprite->changeAnimation(MOVE_LEFT);
 					posCharacter -= dir;
 					dir = -dir;
@@ -60,7 +60,7 @@ void Skeleton::update(int deltaTime) {
 			}
 		}
 		posCharacter.y += FALL_STEP;
-		scene->collisionMoveDown(this);
+		scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y);
 
 		BaseEnemy::update(deltaTime);
 	}

@@ -32,9 +32,16 @@ public:
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int* posY) const;
 	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
 
+	bool collisionLiana(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionLianaUp(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionLianaDown(const glm::ivec2& pos, const glm::ivec2& size) const;
+	bool collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec2* posPlayer) const;
+
 	int getTileSize() const { return tileSize; }
+
 	int getMapWidth() const { return tileSize * mapSize.x; }
 	int getMapHeight() const { return tileSize * mapSize.y; }
+
 	int getMapTilesWidth() const { return mapSize.x; }
 	int getMapTilesHeight() const { return mapSize.y; }
 
@@ -53,7 +60,7 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	int *map;
-	vector<int> downCollision, rightCollision, leftCollision, upCollision;
+	vector<int> downCollision, rightCollision, leftCollision, upCollision, lianaUp, lianaDown, tp;
 
 };
 

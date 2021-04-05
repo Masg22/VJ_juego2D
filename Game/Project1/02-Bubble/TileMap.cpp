@@ -124,7 +124,7 @@ void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
 				// Non-empty tile
 				nTiles++;
 				posTile = glm::vec2(minCoords.x + i * tileSize, minCoords.y + j * tileSize);
-				texCoordTile[0] = glm::vec2(float((tile - 1) % 10) / tilesheetSize.x, float((tile - 1) / 10) / tilesheetSize.y);
+				texCoordTile[0] = glm::vec2(float((tile - 1) % 16) / tilesheetSize.x, float((tile - 1) / 16) / tilesheetSize.y);
 				texCoordTile[1] = texCoordTile[0] + tileTexSize;
 				//texCoordTile[0] += halfTexel;
 				//texCoordTile[1] -= halfTexel;
@@ -159,8 +159,6 @@ void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
 // Method collisionMoveDown also corrects Y coordinate if the box is
 // already intersecting a tile below.
 
-
-//movidas a Colisions:
 bool TileMap::collisionMoveLeft(const glm::ivec2& pos, const glm::ivec2& size) const
 {
 	int x, y0, y1;
@@ -237,7 +235,83 @@ bool TileMap::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int
 	return false;
 }
 
+bool TileMap::collisionLiana(const glm::ivec2& pos, const glm::ivec2& size) const
+{
+	int x, y0, y;
 
+	x = (pos.x + (size.x - 1) / 2) / tileSize;
+	//y0 = pos.y / tileSize;
+	y = (pos.y + size.y * 3 / 2 + 1) / tileSize;
+	//for (int y = y0; y <= y1; y++)
+	{
+		if (find(lianaUp.begin(), lianaUp.end(), map[y * mapSize.x + x]) != lianaUp.end())
+		{
+			return true;
+		}
+		else if (find(lianaDown.begin(), lianaDown.end(), map[y * mapSize.x + x]) != lianaDown.end())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool TileMap::collisionLianaUp(const glm::ivec2& pos, const glm::ivec2& size) const
+{
+	int x, y0, y;
+
+	x = (pos.x + (size.x - 1) / 2) / tileSize;
+	//y0 = pos.y / tileSize;
+	y = (pos.y) / tileSize;
+	//for (int y = y0; y <= y1; y++)
+	{
+		if (find(lianaUp.begin(), lianaUp.end(), map[y * mapSize.x + x]) != lianaUp.end())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool TileMap::collisionLianaDown(const glm::ivec2& pos, const glm::ivec2& size) const
+{
+	int x, y0, y;
+
+	x = (pos.x + (size.x - 1) / 2) / tileSize;
+	//y0 = pos.y / tileSize;
+	y = (pos.y + size.y * 3 / 2) / tileSize;
+	//for (int y = y0; y <= y1; y++)
+	{
+		if (find(lianaDown.begin(), lianaDown.end(), map[y * mapSize.x + x]) != lianaDown.end())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool TileMap::collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec2* posPlayer) const
+{
+	int x, y0, y;
+
+	x = (pos.x + (size.x - 1) / 2) / tileSize;
+	//y0 = pos.y / tileSize;
+	y = (pos.y + size.y / 2) / tileSize;
+	//for (int y = y0; y <= y1; y++)
+	{
+		if (find(tp.begin(), tp.end(), map[y * mapSize.x + x]) != tp.end())
+		{
+			posPlayer->x = x * tileSize - 8;
+			posPlayer->y = y * tileSize - 8;
+			return true;
+		}
+	}
+
+	return false;
+}
 
 
 

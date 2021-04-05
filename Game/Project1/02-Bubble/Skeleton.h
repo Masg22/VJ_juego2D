@@ -5,7 +5,7 @@ public:
 	Skeleton();
 	~Skeleton() {}
 
-	void init(ShaderProgram& shaderProgram, Scene* scene);
+	void init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene);
 	void update(int deltaTime);
 
 protected:
