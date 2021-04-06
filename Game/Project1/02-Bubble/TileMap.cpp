@@ -89,16 +89,19 @@ bool TileMap::loadLevel(const string& levelFile)
 		fin.get(tile);
 #endif
 	}
-	
-	for (int i = 0; i < 3; ++i) {
+
+	for (int i = 0; i < 7; ++i) {
 		fin >> tile;
 
 		while (tile >= 0)
 		{
-			if (i == 0)downCollision.push_back(tile);
-			else if (i == 1)rightCollision.push_back(tile);
-			else if (i == 2)leftCollision.push_back(tile);
-			else if (i == 3)upCollision.push_back(tile);
+			if (i == 0) leftCollision.push_back(tile);
+			else if (i == 1) rightCollision.push_back(tile);
+			else if (i == 2) downCollision.push_back(tile);
+			else if (i == 3) upCollision.push_back(tile);
+			else if (i == 4) lianaUp.push_back(tile);
+			else if (i == 5) lianaDown.push_back(tile);
+			else if (i == 6) tp.push_back(tile);
 			fin >> tile;
 		}
 	}

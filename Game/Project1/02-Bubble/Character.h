@@ -29,6 +29,8 @@ public:
 	virtual void getType() {}
 	void setStartAnimation(int animId) { mStartAnimation = animId; }
 	int getStartAnimation() { return mStartAnimation; }
+	void setScene(Scene* scene) { this->scene = scene; }
+
 
 	void setStartY(int newstartY) { startY = newstartY; }
 	int getStartY() { return startY; }

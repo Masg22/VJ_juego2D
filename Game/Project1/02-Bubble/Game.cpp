@@ -49,7 +49,7 @@ void Game::init()
 	levels[27].init(player, 0);
 
 
-	scene = 22;
+	scene = 1;
 
 	/*
 	string levelPathFile = "levels/level00.txt";
@@ -60,7 +60,8 @@ void Game::init()
 }
 
 bool Game::update(int deltaTime)
-{
+{	
+	player->setScene(&levels[scene]);
 	levels[scene].update(deltaTime);
 	int out = player->isOut();
 	if (out != 0) {

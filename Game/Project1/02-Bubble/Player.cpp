@@ -426,6 +426,7 @@ void Player::initTeleports() {
 	teleports[17] = { 22, glm::ivec2(28 * 16 - 8, 4 * 16 - 8) };
 	teleports[18] = { 23, glm::ivec2(2 * 16 - 8, 8 * 16 - 8) };
 
+	teleporting = false;
 	count = 0;
 }
 

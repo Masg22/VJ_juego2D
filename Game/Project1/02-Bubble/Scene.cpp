@@ -14,7 +14,7 @@
 #define SCREEN_Y 32
 
 #define INIT_PLAYER_X_TILES 17
-#define INIT_PLAYER_Y_TILES 18
+#define INIT_PLAYER_Y_TILES 15
 
 #define FALL_STEP 4
 
