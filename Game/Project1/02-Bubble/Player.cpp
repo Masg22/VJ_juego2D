@@ -7,9 +7,9 @@
 #include "Scene.h"
 
 
-#define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 90
-#define FALL_STEP 4
+#define JUMP_ANGLE_STEP 3
+#define JUMP_HEIGHT 45
+#define FALL_STEP 3
 #define MOVEMENT_DEFAULT 2
 #define MOVEMENT_SPEED 3
 #define HEALTH 100
