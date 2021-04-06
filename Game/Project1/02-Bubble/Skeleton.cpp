@@ -64,4 +64,5 @@ void Skeleton::update(int deltaTime) {
 
 		BaseEnemy::update(deltaTime);
 	}
+	sprite->setPosition(posCharacter);
 }

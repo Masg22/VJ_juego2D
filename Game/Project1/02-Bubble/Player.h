@@ -24,7 +24,7 @@ public:
 
 	void computeAttack(int deltaTime);
 	void computeMovement(int deltaTime);
-	void computeJump();
+	//void computeJump();
 
 	void changeGameMode();
 	void givePowerUp(int i);

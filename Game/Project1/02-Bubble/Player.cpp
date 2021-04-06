@@ -186,7 +186,7 @@ void Player::update(int deltaTime) {
 void Player::computeNextMove(int deltaTime) {
 	computeAttack(deltaTime);
 	computeMovement(deltaTime);
-	computeJump();
+	//computeJump();
 }
 
 void Player::computeAttack(int deltaTime) {
@@ -291,7 +291,27 @@ void Player::computeMovement(int deltaTime) {
 
 	}
 
-	if (lianaClimb) {
+	if (bJumping)
+	{
+		jumpAngle += JUMP_ANGLE_STEP;
+		if (jumpAngle == 180)
+		{
+			bJumping = false;
+			posCharacter.y = startY;
+		}
+		else
+		{
+			posCharacter.y = int(startY - JUMP_HEIGHT * sin(3.14159f * jumpAngle / 180.f));
+			if (jumpAngle < 90 && scene->collisionMoveUp(posCharacter, glm::ivec2(32, 32), &posCharacter.y)) {
+				jumpAngle = 180 - jumpAngle;
+			}
+			if (jumpAngle > 90)
+				bJumping = !scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y);
+
+			//cambiar animacion aqui salto
+		}
+	}
+	else if (lianaClimb) {
 		if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
 			posCharacter.y -= 2;
 			if (sprite->animation() != CLIMB_ACTIVE)
@@ -338,7 +358,7 @@ void Player::computeMovement(int deltaTime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posCharacter.x), float(tileMapDispl.y + posCharacter.y)));
 }
 
-void Player::computeJump() {
+/*void Player::computeJump() {
 	if (bJumping) {
 		jumpAngle += JUMP_ANGLE_STEP;
 		if (scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y) || jumpAngle == 180) {
@@ -377,6 +397,7 @@ void Player::computeJump() {
 	}
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posCharacter.x), float(tileMapDispl.y + posCharacter.y)));
 }
+*/
 
 void Player::damage(int attackPower) {
 	if (inmunytyFrames == 0 && !godMode) {
