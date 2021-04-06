@@ -53,7 +53,7 @@ public:
 	void changePlayerGameMode();
 	void givePlayerPowerUp(int i);
 
-	bool characterCollidesEnemies(Character* character) const;
+	void playerCollidesEnemies(BaseEnemy* enemy) const;
 	void playerCollidesItem(Item* it) const;
 
 private:

@@ -67,7 +67,7 @@ void Scene::update(int deltaTime)
 	player->update(deltaTime);
 	for (set<BaseEnemy*>::iterator it = enemies.begin(); it != enemies.end();) {
 		(*it)->update(deltaTime);
-		//collisions
+		playerCollidesEnemies((*it));
 		if ((*it)->isCharacterDead()) {
 			//Game::instance().addScore((*it)->getScore());
 			enemies.erase(it++);
@@ -149,31 +149,10 @@ bool Scene::collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec
 	return map->collisionTP(pos, size, posPlayer);
 }
 
-bool Scene::characterCollidesEnemies(Character* character) const {
-	//REHACER
-
-	bool collision = false; //Can be improved checking if true after each enemy and returning(with few enemies doesn't matter)
-	bool collidedEnemy = false;
-
-	int posEnemyX = character->getPosition().x;
-
-	
-	for (BaseEnemy* enemy : enemies) {
-
-		collidedEnemy = colisions->characters(character, enemy);
-		collision = collision || collidedEnemy;
-		if (collidedEnemy) {
-			posEnemyX = enemy->getPosition().x;
-			break;
-		}
+void Scene::playerCollidesEnemies(BaseEnemy* enemy) const {
+	if (colisions->characters(player, enemy)) {
+		enemy->die();
 	}
-
-	Player* p = dynamic_cast<Player*>(character);
-	if (p && collision) {
-		//enemies can not get damaged between them!
-		p->damage(10);
-	}
-	return collision;
 }
 
 void Scene::playerCollidesItem(Item* it) const {
@@ -188,7 +167,6 @@ void Scene::playerCollidesItem(Item* it) const {
 		it->desactivate();
 	}
 }
-
 
 void Scene::initShaders()
 {
@@ -251,7 +229,6 @@ void Scene::initEnemies(std::string enemiesLocationPathFile) {
 		}
 		}
 	}
-
 	fin.close();
 }
 
@@ -285,7 +262,6 @@ void Scene::initItems(std::string ItemsLocationPathFile) {
 	fin.close();
 
 }
-
 
 bool Scene::playerHits(BaseEnemy* enemy) const {
 	return false;

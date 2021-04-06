@@ -14,23 +14,6 @@ BaseEnemy::BaseEnemy() {
 void BaseEnemy::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene)
 {
 	Character::init(tileMapPos, shaderProgram, scene);
-	/*
-	spritesheet.loadFromFile("images/SkeletonAnimations.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.5f, 0.5f), &spritesheet, &shaderProgram);
-	
-	sprite->setNumberAnimations(2);
-
-	sprite->setAnimationSpeed(MOVE_LEFT, 8);
-	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.5f, 0.5f));
-	sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.0f, 0.5f));
-
-	sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5f, 0.0f));
-	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0f, 0.0f));
-
-	sprite->changeAnimation(0);
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posEnemy.x), float(tileMapDispl.y + posEnemy.y)));
-	*/
 }
 
 void BaseEnemy::update(int deltaTime)
@@ -39,6 +22,10 @@ void BaseEnemy::update(int deltaTime)
 		isDead = true;
 
 	Character::update(deltaTime);
+}
+
+void BaseEnemy::die() {
+	isDead = true;
 }
 
 BaseEnemy::~BaseEnemy()

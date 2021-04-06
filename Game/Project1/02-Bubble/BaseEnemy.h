@@ -17,6 +17,8 @@ public:
 
 	virtual int getScore() { return 200; }
 
+	void die();
+
 protected:
 	glm::ivec2 dir;
 	bool isAttacking;

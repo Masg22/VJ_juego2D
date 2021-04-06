@@ -29,49 +29,30 @@ void Skeleton::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene*
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.5f, 0.0f));
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0f, 0.0f));
 
-	sprite->changeAnimation(MOVE_LEFT);
-	sprite->setPosition(glm::vec2(float(posCharacter.x), float(posCharacter.y)));  
+	sprite->changeAnimation(MOVE_LEFT); 
 }
 
 void Skeleton::update(int deltaTime) {
 	posCharacter += dir;
-	if (scene->collisionCanFall(posCharacter, glm::ivec2(32, 32))) {
-		if (dir.x < 0) {
+	
+	if (dir.x < 0) {
+		if (scene->collisionMoveLeft(posCharacter, glm::ivec2(32, 32))) {
 			sprite->changeAnimation(MOVE_RIGHT);
+			posCharacter -= dir;
+			dir = -dir;
 		}
-		else {
-			sprite->changeAnimation(MOVE_LEFT);
-		}
-		posCharacter -= dir;
 	}
 	else {
-		if (dir.x < 0) {
-			if (scene->collisionMoveLeft(posCharacter, glm::ivec2(32, 32))) {
-				sprite->changeAnimation(MOVE_RIGHT);
-				posCharacter -= dir;
-				dir = -dir;
-			}
-			else {
-				if (scene->collisionMoveRight(posCharacter, glm::ivec2(32, 32))) {
-					sprite->changeAnimation(MOVE_LEFT);
-					posCharacter -= dir;
-					dir = -dir;
-				}
-			}
+		if (scene->collisionMoveRight(posCharacter, glm::ivec2(32, 32))) {
+			sprite->changeAnimation(MOVE_LEFT);
+			posCharacter -= dir;
+			dir = -dir;
 		}
-		posCharacter.y += FALL_STEP;
-		scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y);
-
-		BaseEnemy::update(deltaTime);
 	}
-	
+		 
 	posCharacter.y += FALL_STEP;
-	if (scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y))
-	{
-		//cambiar animación aqui salto
-		startY = posCharacter.y;
+	scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y);
 
-	}
-
+	BaseEnemy::update(deltaTime);
 	sprite->setPosition(posCharacter);
-}
+	}
