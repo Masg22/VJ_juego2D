@@ -54,7 +54,7 @@ public:
 	void givePlayerPowerUp(int i);
 
 	bool characterCollidesEnemies(Character* character) const;
-	void playerCollidesItem() const;
+	void playerCollidesItem(Item* it) const;
 
 private:
 	void initShaders();

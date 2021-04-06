@@ -65,19 +65,23 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	player->update(deltaTime);
-	for (BaseEnemy* enemy : enemies) {
-		enemy->update(deltaTime);
-	}
-	//limpiar enemigos muertos
 	for (set<BaseEnemy*>::iterator it = enemies.begin(); it != enemies.end();) {
+		(*it)->update(deltaTime);
+		//collisions
 		if ((*it)->isCharacterDead()) {
 			//Game::instance().addScore((*it)->getScore());
 			enemies.erase(it++);
 		}
 		else ++it;
 	}
-	for (Item* it : items) {
-		it->update(deltaTime);
+
+	for (set<Item*>::iterator it = items.begin(); it != items.end();) {
+		(*it)->update(deltaTime);
+		playerCollidesItem((*it));
+		if (!((*it)->isActive())) {
+			items.erase(it++);
+		}
+		else ++it;
 	}
 }
 
@@ -172,21 +176,19 @@ bool Scene::characterCollidesEnemies(Character* character) const {
 	return collision;
 }
 
-void Scene::playerCollidesItem() const {
-	for (Item* it : items) {
-		if (colisions->object(player, it)) {
-			int id = it->getID();
-			if (id == 8) {
+void Scene::playerCollidesItem(Item* it) const {
+	if (colisions->object(player, it)) {
+		int id = it->getID();
+		if (id == 8) {
 				//dar amigo a player
-			}
-			else if (player->hasPowerUp(id)) {
-				player->givePowerUp(id);
-			}
-			//delete item
 		}
+		else if (! player->hasPowerUp(id)) {
+			player->givePowerUp(id);
+		}
+		it->desactivate();
 	}
-	
 }
+
 
 void Scene::initShaders()
 {

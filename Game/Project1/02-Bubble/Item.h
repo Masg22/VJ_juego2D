@@ -24,6 +24,9 @@ public:
 
 	int getID() const { return itemID; }
 
+	void desactivate();
+	bool isActive() const { return activated; }
+
 private:
 	string pathToSpritesheet;
 	Texture spritesheet;
@@ -32,4 +35,5 @@ private:
 	Scene* scene;
 	glm::ivec2 posItem, tileMapDispl;
 	int score;
+	bool activated;
 };

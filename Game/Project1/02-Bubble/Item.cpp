@@ -3,6 +3,7 @@
 Item::Item(int id) {
 	itemID = id;
 	score = id * 10;
+	activated = true;
 }
 Item::~Item() {}
 
@@ -39,4 +40,8 @@ void Item::render() {
 void Item::setPosition(const glm::ivec2& pos) {
 	posItem = pos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posItem.x), float(tileMapDispl.y + posItem.y)));
+}
+
+void Item::desactivate() {
+	activated = false;
 }
