@@ -8,26 +8,28 @@ class Scene;
 
 class Item {
 public:
-	Item();
+	Item(int id);
 	~Item();
 
-	void init(ShaderProgram& shaderProgram, Scene* scene);
+	void init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene* scene);
 	void update(int deltaTime);
 	void render();
 
 	int getScore() { return score; }
 
 	void setPosition(const glm::ivec2& pos);
-	glm::ivec2 getPosition() { return posObj; }
+	glm::ivec2 getPosition() const { return posItem; }
 
-	glm::ivec2 getSize() { return glm::ivec2(16, 16); }
+	glm::ivec2 getSize() const { return glm::ivec2(16, 16); }
+
+	int getID() const { return itemID; }
 
 private:
 	string pathToSpritesheet;
 	Texture spritesheet;
 	Sprite* sprite;
-	int item_id;
+	int itemID;
 	Scene* scene;
-	glm::ivec2 posObj;
+	glm::ivec2 posItem, tileMapDispl;
 	int score;
 };

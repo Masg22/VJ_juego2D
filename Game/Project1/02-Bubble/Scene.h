@@ -53,10 +53,14 @@ public:
 	void changePlayerGameMode();
 	void givePlayerPowerUp(int i);
 
+	bool characterCollidesEnemies(Character* character) const;
+	void playerCollidesItem() const;
+
 private:
 	void initShaders();
 	void initEnemies(std::string enemiesLocationPathFile);
-	bool characterCollidesEnemies(Character* character) const;
+	void initItems(std::string itemsLocationPathFile);
+	
 
 private:
 
@@ -68,6 +72,7 @@ private:
 	TileMap *map;
 	Player *player;
 	set<BaseEnemy*> enemies;
+	set<Item*> items;
 	Colisions* colisions;
 	
 	ShaderProgram texProgram;

@@ -8,6 +8,7 @@
 #include <GL/glut.h>
 #include <glm/glm.hpp>
 #include "Skeleton.h"
+#include "Item.h"
 
 
 #define SCREEN_X 0
@@ -53,6 +54,7 @@ void Scene::init(Player* playerGen, int lvl){
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	
 	initEnemies("levels/level" + to_string(lvl) + "_enemies.txt");
+	initItems("levels/level" + to_string(lvl) + "_items.txt");
 
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
@@ -74,6 +76,9 @@ void Scene::update(int deltaTime)
 		}
 		else ++it;
 	}
+	for (Item* it : items) {
+		it->update(deltaTime);
+	}
 }
 
 void Scene::render()
@@ -90,6 +95,9 @@ void Scene::render()
 	player->render();
 	for (BaseEnemy* enemy : enemies) {
 		enemy->render();
+	}
+	for (Item* it : items) {
+		it->render();
 	}
 }
 
@@ -164,6 +172,22 @@ bool Scene::characterCollidesEnemies(Character* character) const {
 	return collision;
 }
 
+void Scene::playerCollidesItem() const {
+	for (Item* it : items) {
+		if (colisions->object(player, it)) {
+			int id = it->getID();
+			if (id == 8) {
+				//dar amigo a player
+			}
+			else if (player->hasPowerUp(id)) {
+				player->givePowerUp(id);
+			}
+			//delete item
+		}
+	}
+	
+}
+
 void Scene::initShaders()
 {
 	Shader vShader, fShader;
@@ -227,8 +251,39 @@ void Scene::initEnemies(std::string enemiesLocationPathFile) {
 	}
 
 	fin.close();
+}
+
+void Scene::initItems(std::string ItemsLocationPathFile) {
+	ifstream fin;
+	string line;
+	stringstream sstream;
+
+	fin.open(ItemsLocationPathFile);
+	if (!fin.is_open()) {
+		cout << "file already open!" << endl;
+		return;
+	}
+
+	getline(fin, line);
+	sstream.str(line);
+
+	int numEnemies;
+	sstream >> numEnemies;
+	int itemType, posX, posY;
+
+	for (int i = 0; i < numEnemies; ++i) {
+		getline(fin, line);
+		stringstream(line) >> itemType >> posX >> posY;
+		Item* it = new Item(itemType);
+		it->init(glm::ivec2(0,0), texProgram, this);
+		it->setPosition(glm::ivec2(posX * map->getTileSize(), posY * map->getTileSize()));
+		items.insert(it);
+	}
+
+	fin.close();
 
 }
+
 
 bool Scene::playerHits(BaseEnemy* enemy) const {
 	return false;

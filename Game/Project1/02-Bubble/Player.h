@@ -33,6 +33,8 @@ public:
 	void initTeleports();
 	int getTeleportNum(int scene);
 	int teleport(int& scene);
+
+	bool hasPowerUp(int i) const { return powerUps[i]; }
 	
 private:
 	int actHealth, maxHealth;

@@ -359,47 +359,6 @@ void Player::computeMovement(int deltaTime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posCharacter.x), float(tileMapDispl.y + posCharacter.y)));
 }
 
-/*void Player::computeJump() {
-	if (bJumping) {
-		jumpAngle += JUMP_ANGLE_STEP;
-		if (scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y) || jumpAngle == 180) {
-			bJumping = false;
-		}
-		else { // up 0 <= jumpAngle <= 90 , down 90<jumpAngle<=180
-			posCharacter.y = int(startY - JUMP_HEIGHT * sin(3.14159f * jumpAngle / 180.f));
-
-			if (scene->collisionMoveUp(posCharacter, glm::ivec2(32, 32), &posCharacter.y)) {
-				posCharacter.y = int(startY - JUMP_HEIGHT * sin(3.14159f * (jumpAngle - JUMP_ANGLE_STEP) / 180.f));
-				bJumping = false;
-			}
-			else if (jumpAngle > 90) {
-				bJumping = !scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y);
-			}
-		}
-	}
-	else {
-		posCharacter.y += FALL_STEP;
-		if (scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y)){
-			if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
-				if (!bAttacking) {
-					if (sprite->animation() % 2 == 0) {
-						sprite->changeAnimation(JUMP_LEFT);
-					}
-					else {
-						sprite->changeAnimation(JUMP_LEFT);
-					}
-					//sound
-					bJumping = true;
-					jumpAngle = 0;
-					startY = posCharacter.y;
-				}
-			}
-		}
-	}
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posCharacter.x), float(tileMapDispl.y + posCharacter.y)));
-}
-*/
-
 void Player::damage(int attackPower) {
 	if (inmunytyFrames == 0 && !godMode) {
 		inmunytyFrames = 10;

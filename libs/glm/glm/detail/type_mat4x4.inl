@@ -346,8 +346,7 @@ namespace detail
 #	else
 		template <typename T, precision P>
 		GLM_FUNC_QUALIFIER GLM_CONSTEXPR typename tmat4x4<T, P>::length_type tmat4x4<T, P>::length() const
-		{
-			return 4;
+		{			return 4;
 		}
 
 		template <typename T, precision P>
