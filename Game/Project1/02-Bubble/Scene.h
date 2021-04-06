@@ -44,7 +44,7 @@ public:
 	bool collisionTP(const glm::ivec2& pos, const glm::ivec2& size, glm::ivec2* posPlayer) const;
 
 	//bool characterCollidesTiles(Character* character) const;
-	bool collisionCanFall(BaseEnemy* enemy) const;
+	bool collisionCanFall(const glm::ivec2& pos, const glm::ivec2& size) const;
 	bool playerHits(BaseEnemy* enemy) const;
 
 	Player* getPlayer() { return  player; }

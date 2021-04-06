@@ -239,10 +239,10 @@ void Player::computeMovement(int deltaTime) {
 		}
 		if (sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);
-		posCharacter.x -= 2;
+		powerUps[BOOTS] ? posCharacter.x -= MOVEMENT_SPEED : posCharacter.x -= MOVEMENT_DEFAULT;
 		if (scene->collisionMoveLeft(posCharacter, glm::ivec2(32, 32)))
 		{
-			posCharacter.x += 2;
+			powerUps[BOOTS] ? posCharacter.x += MOVEMENT_SPEED : posCharacter.x += MOVEMENT_DEFAULT;
 			sprite->changeAnimation(STAND_LEFT);
 			if (bJumping) {
 				sprite->changeAnimation(JUMP_LEFT);
@@ -260,10 +260,11 @@ void Player::computeMovement(int deltaTime) {
 		}
 		if (sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);
-		posCharacter.x += 2;
+		powerUps[BOOTS] ? posCharacter.x += MOVEMENT_SPEED : posCharacter.x += MOVEMENT_DEFAULT;
+
 		if (scene->collisionMoveRight(posCharacter, glm::ivec2(32, 32)))
 		{
-			posCharacter.x -= 2;
+			powerUps[BOOTS] ? posCharacter.x -= MOVEMENT_SPEED : posCharacter.x -= MOVEMENT_DEFAULT;
 			sprite->changeAnimation(STAND_RIGHT);
 			if (bJumping) {
 				sprite->changeAnimation(JUMP_LEFT);

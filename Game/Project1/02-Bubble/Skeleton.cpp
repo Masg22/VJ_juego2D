@@ -35,7 +35,7 @@ void Skeleton::init(glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Scene*
 
 void Skeleton::update(int deltaTime) {
 	posCharacter += dir;
-	if (scene->collisionCanFall(this)) {
+	if (scene->collisionCanFall(posCharacter, glm::ivec2(32, 32))) {
 		if (dir.x < 0) {
 			sprite->changeAnimation(MOVE_RIGHT);
 		}
@@ -64,5 +64,14 @@ void Skeleton::update(int deltaTime) {
 
 		BaseEnemy::update(deltaTime);
 	}
+	
+	posCharacter.y += FALL_STEP;
+	if (scene->collisionMoveDown(posCharacter, glm::ivec2(32, 32), &posCharacter.y))
+	{
+		//cambiar animación aqui salto
+		startY = posCharacter.y;
+
+	}
+
 	sprite->setPosition(posCharacter);
 }

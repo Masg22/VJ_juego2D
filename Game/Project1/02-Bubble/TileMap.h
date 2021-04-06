@@ -45,6 +45,8 @@ public:
 	int getMapTilesWidth() const { return mapSize.x; }
 	int getMapTilesHeight() const { return mapSize.y; }
 
+	bool mapFalls(const glm::ivec2& pos, const glm::ivec2& size) const;
+
 	int* getMap() const { return map; };
 	
 private:

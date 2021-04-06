@@ -1,4 +1,3 @@
-#pragma once
 #include "BaseEnemy.h"
 class Skeleton : public BaseEnemy {
 public:

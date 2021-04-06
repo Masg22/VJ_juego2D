@@ -16,8 +16,6 @@
 #define INIT_PLAYER_X_TILES 17
 #define INIT_PLAYER_Y_TILES 15
 
-#define FALL_STEP 4
-
 Scene::Scene()
 {
 	map = NULL;
@@ -111,8 +109,8 @@ bool Scene::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* 
 	return map->collisionMoveUp(pos, size, posY);
 }
 
-bool Scene::collisionCanFall(BaseEnemy* enemy) const {
-	return colisions->mapFalls(map, enemy);
+bool Scene::collisionCanFall(const glm::ivec2& pos, const glm::ivec2& size) const {
+	return map->mapFalls(pos, size);
 }
 
 int Scene::getMapSizeX() const {
